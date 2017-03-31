@@ -2,16 +2,11 @@ from PIL import Image
 
 im = Image.open("Lenna.jpeg") 
 
-# Create copy of the original image
-pix = im.load() 
-
 # height & width of image
 x_size = im.size[0]
 y_size = im.size[1]
 
-
-print "The size of the Image is:", (im.size[0]), " x ", (im.size[1])
-print
+print("The size of the Image is:", im.size[0], " x ", im.size[1])
 
 # loop through image starting from bottom right corner pixel
 #for row in xrange((x_size-1), 0, -1):
@@ -47,20 +42,81 @@ print
 #
 #           # note: nothing gets modified if binary counter == 0
 
+import random
+
+message = input('what is the message? ')
+
+print("Text length = ", len(message), "* 8-bits = " , (len(message) * 8),)
+print("Binary: ", bin(len(message) * 8))
+print("Pixels needed to encode (not including reserved last 11): ", ((len(message)*8)/3))
+
+
+# === following code from guide: interactivepython.org ===
+
+# ===================================================
+# Function: bit_generator
+# Input: string
+# Output: 1 bit
+# ===================================================
+# Summury: 
+# returns the bits needed for the message
+# return 7 x 0's to indicate end of message
+# returns random 0 & 1 to fill up remaining pixels
+# ===================================================
+def bit_generator(message):
+    for ch in message:
+        ascii = ord(ch)
+        count = 0
+        while count < 7:
+            yield ascii & 1
+            ascii = ascii >> 1
+            count += 1
+    for i in range(7):
+        yield 0
+    while True:
+        yield random.randrange(1)
+
+bitstream = bit_generator(message)
+
+# ===================================================
+# Function: setbit
+# Input: oldbyte, newbit
+# Output: updated bit value
+# ===================================================
+# Summury: 
+# function replaces the lsb of the byte and returns 
+# the new byte
+# ===================================================
+
+def setbit(oldbyte, newbit):
+	if newbit:
+		return oldbyte | newbit
+	else:
+		return oldbyte & 0b11111110
+
+# ======== end code from guide: interactivepython.org ====
+
+# Create copy of the original image
+pix = im.load() 
 
 # testing last 11 pixels
-for row in xrange((x_size-1), (x_size-2), -1):
-    for col in xrange((y_size-1), (y_size-12), -1):
+for row in range((x_size-1), 0, -1):
+    for col in range((y_size-1), 0, -1):
+
         red_template, green_template, blue_template = im.getpixel((row,col))
-    
-        # test: output individual pixel r,g,b values
-        print "Pixel locaiton:", (row), " x ", (col)
-        print
-        print "R value:", (red_template), "| R binary:", (bin(red_template))
-        print "G value:" , (green_template), "| G binary:", (bin(green_template))
-        print "B value:", (blue_template), "| B binary:", (bin(blue_template))
-        print
 
+        redbit = next(bitstream)
+        red_template = setbit(red_template,redbit)
 
-# save encoded image
+        greenbit = next(bitstream)
+        green_template = setbit(green_template,greenbit)
+
+        bluebit = next(bitstream)
+        blue_template = setbit(blue_template,bluebit)
+
+	    # save new lsb back into pixel
+        pix[row, col] = red_template, green_template, blue_template
+
+# it automatically saves?
 im.save("modifiedLenna.png")
+
