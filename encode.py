@@ -13,13 +13,13 @@ print("The size of the Image is:", im.size[0], " x ", im.size[1])
 #    for col in xrange((y_size-1), 0, -1):      
 #
 #       # capture r,g,b values
-#       red_template, green_template, blue_template = im.getpixel((row, col))
+#       red_value, green_value, blue_value = im.getpixel((row, col))
 #
 #       # note: remember to reserve last 11 pixels for text length (binary)
 #       # loop only 8 times to record binary of text length
 #
 #       # check if at last 11 pixels
-#       # if (row == x_size-1) && (col == (y_size-1..y_size-12))
+#       # if (row == x_size-1) && (col == (y_size-1..y_size-11))
 #           # check text length (binary counter)
 #           # if (text_length_counter > 0)
 #           #   modify red value & decrease text_length_counter
@@ -45,16 +45,16 @@ print("The size of the Image is:", im.size[0], " x ", im.size[1])
 import random
 
 # note: figure out how to read from a text file instead of terminal
+# message = open("text.txt")
 message = input('what is the message? ')
 
 # Output text/message information
 # note: check for length of the message to the image height x image length
 #       output error message if the length of the message is > image (length x height)
 
-print("Text length = ", len(message), "* 8-bits = " , (len(message) * 8),)
+print("Text length = ", len(message), "* 8-bits = " , (len(message) * 8))
 print("Binary: ", bin(len(message) * 8))
-print("Pixels needed to encode (not including reserved last 11): ", ((len(message)*8)/3))
-
+print("Pixels needed to encode (not including reserved last 11): ", ((len(message)*8)/3 + 1))
 
 # === following code from guide: interactivepython.org ===
 
@@ -63,7 +63,7 @@ print("Pixels needed to encode (not including reserved last 11): ", ((len(messag
 # Input: string
 # Output: 1 bit
 # ===================================================
-# Summury: 
+# Summary: 
 # returns the bits needed for the message
 # return 7 x 0's to indicate end of message
 # returns random 0 & 1 to fill up remaining pixels
@@ -88,7 +88,7 @@ bitstream = bit_generator(message)
 # Input: oldbyte, newbit
 # Output: updated bit value
 # ===================================================
-# Summury: 
+# Summary: 
 # function replaces the lsb of the byte and returns 
 # the new byte
 # ===================================================
@@ -111,6 +111,8 @@ for row in range((x_size-1), 0, -1):
 	# reserve the last 11 pixels to store the text/message length in binary
 	# convert length of text/message to integer -> binary 
 	# append twenty-four 0s and then binary of the text/message length
+	
+	# check for the last 11 pixels
 	
 	# start on 12th pixel and insert the message using the pixel RGB lsb
 	# loop length of text/message times
