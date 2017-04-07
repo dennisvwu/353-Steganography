@@ -22,20 +22,13 @@ for row in range((x_size-1), 0, -1):
 		# try: if (y_size-11 <= col <= y_size-1):
             if ((col == (y_size-1)) | (col == (y_size-2)) | (col == (y_size-3))):
             
-       
-                print()
                 print("Row:", row, "& Col:", col)
-                print("red binary:", bin(red_value))
-                print("green binary:", bin(green_value))
-                print("blue binary:", bin(blue_value))
                 print("lsb values:", red_value & 1, green_value & 1, blue_value & 1)
 		
 		# only grab the least significant bit
 		binaryArray.append(str(red_value & 1))
 		binaryArray.append(str(green_value & 1))
 		binaryArray.append(str(blue_value & 1))
-		
-		
             
             
  #           if ((col == (y_size-4)) | (col == (y_size-5)) | (col == (y_size-6))):
