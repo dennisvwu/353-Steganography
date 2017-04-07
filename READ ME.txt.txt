@@ -1,0 +1,20 @@
+Name: Dennis Wu
+Application:
+
+decode.py 
+Execution: python3 decode.py
+Note: Image to decode should called "testImage.png"
+
+Using pill, I grab the width and height of the image. 
+Going reverse to read the last 11 pixel's r,g,b values.
+Using simple binary operator to grab the lsb of each color binary value
+Combine the binary array and convert the string into an integer value
+
+Using the integer value (aka length), I loop through the remaining pixels (12th pixel)
+Once the length counter goes down to zero, I combine all the lsb values and
+attempt to conver the binary to int, then from int to char.
+
+encode.py
+Execution: python3 encode.py
+Note: code is incomplete, I was stuck on trying to convert the binary to int to char on
+the decode.py file so I was not able to complete the encoding. Included are psudeo code.
