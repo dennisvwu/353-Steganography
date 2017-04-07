@@ -1,6 +1,6 @@
 from PIL import Image
 
-im = Image.open("Lenna.jpeg") 
+im = Image.open("Image.jpeg") 
 
 # height & width of image
 x_size = im.size[0]
@@ -109,7 +109,11 @@ for row in range((x_size-1), 0, -1):
     for col in range((y_size-1), 0, -1):
 	
 	# reserve the last 11 pixels to store the text/message length in binary
-	# write loop that starts backwards
+	# convert length of text/message to integer -> binary 
+	# append twenty-four 0s and then binary of the text/message length
+	
+	# start on 12th pixel and insert the message using the pixel RGB lsb
+	# loop length of text/message times
 
         red_value, green_value, blue_value = im.getpixel((row, col))
 
@@ -122,9 +126,9 @@ for row in range((x_size-1), 0, -1):
         bluebit = next(bitstream)
         blue_value = setbit(blue_value, bluebit)
 
-	    # save new lsb back into pixel
+	# save new lsb back into pixel
         pix[row, col] = red_value, green_value, blue_value
 
 # it automatically saves?
-im.save("modifiedLenna.png")
+im.save("modifiedImage.png")
 
