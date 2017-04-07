@@ -52,10 +52,8 @@ if (width*height < (len(message)*8)):
 
 # format the binary
 binLength = '{:08b}'.format(len(message)*8)
-paddedLength = binLength.zfill(36)
-
 # fill in extra 0s
-#extraZeros = '000000000000000000000000'
+paddedLength = binLength.zfill(36)
 
 # combine everything
 binArray = []
@@ -94,7 +92,7 @@ for row in range((height-1), -1, -1):
 	
         pixeCounter = pixeCounter + 1
 	    
-	    # reserve the last 11 pixels to store the text/message length in binary
+	# reserve the last 11 pixels to store the text/message length in binary
         if (pixeCounter <= 10):
            
            binary_r = int(binStringLength[pointer])
@@ -109,7 +107,7 @@ for row in range((height-1), -1, -1):
            blue_value = setbit(blue_value, binary_b)
            pointer = pointer + 1
 
-	       # save new lsb back into pixel
+	   # save new lsb back into pixel
            pix[col, row] = red_value, green_value, blue_value
         
         # 11th pixel only stores the Red and Green value
@@ -123,7 +121,7 @@ for row in range((height-1), -1, -1):
            green_value = setbit(green_value, binary_g)
            pointer = pointer + 1
 
-	       # save new lsb back into pixel
+	   # save new lsb back into pixel
            pix[col, row] = red_value, green_value, binary_b
            
            # reset pointer
