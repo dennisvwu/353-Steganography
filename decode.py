@@ -10,7 +10,6 @@
 #          and is outputted to the screen to reveal the hidden message.
 # 
 # ============================================================================
-
 from PIL import Image
 
 import binascii, sys
@@ -46,7 +45,7 @@ for row in range((height-1), -1, -1):
         # last 11 pixels reserved for message length       
         if (counter <= 10):
                    		
-	       # only grab the least significant bit
+	   # only grab the least significant bit
            binaryArray.append(str(binary_r))
            binaryArray.append(str(binary_g))
            binaryArray.append(str(binary_b))
@@ -54,7 +53,7 @@ for row in range((height-1), -1, -1):
         # only need r & g value on 11th pixel
         if (counter == 11):
       
-	       # only grab the least significant bit
+	   # only grab the least significant bit
            binaryArray.append(str(binary_r))
            binaryArray.append(str(binary_g)) 
            
@@ -62,15 +61,15 @@ for row in range((height-1), -1, -1):
 binString = ''.join(binaryArray)
 binToint = int(binString, 2)
 
-print("Binary:", binString)
-print("Integer value = ", binToint)
+print("Integer length value = ", binToint)
 
 textArray = []
-counter = binToint
 pixelCounter = 0
+pointer = 0
 
 # repeat process again to get secret message
 for row in range((height-1), -1, -1):
+
     for col in range((width-1), -1, -1):
     
         # get the r, g, b values from each pixel
@@ -81,32 +80,36 @@ for row in range((height-1), -1, -1):
         binary_g = (green_value & 1)
         binary_b = (blue_value & 1)    
         
-        pixelCounter = pixelCounter + 1   
+        pixelCounter = pixelCounter + 1         
         
         # skip 11 pixels reserved for message length       
-        if (pixelCounter > 11):  
+        if ((pixelCounter > 11) and (pixelCounter < binToint)):       
                 
             # start from 12th pixel
-            if (counter > 0):                  
+            if (pointer <= binToint):                  
                textArray.append(str(binary_r))
-               counter = counter - 1
-            if (counter > 0):
+               pointer = pointer + 1
+               
+            if (pointer <= binToint):                  
                textArray.append(str(binary_g))
-               counter = counter - 1
-            if (counter > 0):
+               pointer = pointer + 1
+               
+            if (pointer <= binToint):                  
                textArray.append(str(binary_b))
-               counter = counter - 1                                            
+               pointer = pointer + 1
+                            
 
-           
 # combine all the values & convert to string               
 binMessage = ''.join(textArray)
-
+   
 # convert binary to actual text
-message = ''.join(chr(int(binMessage[i*8: i*8 + 8], 2)) 
-for i in range(len(binMessage) // 8))
+message = ''.join(chr(int(binMessage[ i*8: i*8 + 8],2)) for i in range(len(binMessage) // 8)) 
 
-print ("Message = ", message)
-#print (binMessage)
+print("")
+print("Decoding Sucessful!")
+print("Message:")
+print(message) 
+
 
       
 

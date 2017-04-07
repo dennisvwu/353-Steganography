@@ -10,22 +10,22 @@
 #          the secret.txt file.
 # 
 # ============================================================================
-
 from PIL import Image
 
 import string
 
 # === following code from guide: interactivepython.org ===
-
 def setbit(oldbyte, newbit):
 	if newbit:
 		return oldbyte | newbit
 	else:
 		return oldbyte & 0b11111110
-
 # ======== end code from guide: interactivepython.org ====
 
 im = Image.open("Image.jpeg") 
+
+# Create copy of the original image
+pix = im.load() 
 
 # height & width of image
 width = im.width
@@ -35,6 +35,7 @@ height = im.height
 message = open('secret.txt', 'r').read()
 
 # Output text/message information
+print("")
 print("The size of the Image is:", width, " x ", height, " = ", (width*height), "pixels")
 print("Secret text length:", len(message))
 print("Pixels needed to encode (including reserved last 11):", ((len(message)*8)//3 + 12), "pixels")
@@ -42,24 +43,27 @@ print("Pixels needed to encode (including reserved last 11):", ((len(message)*8)
 # note: check for length of the message to the image height x image length
 #       output error message if the length of the message is > image (length x height)
 if (width*height < (len(message)*8)):
+    print("")
+    print("FAILED")
     print("Sorry, image size is too small to fit all the secret message")
-    # need to figure out how to exit program
-
-binArray = []
+    print("FAILED")
+    print("")
+    exit()
 
 # format the binary
 binLength = '{:08b}'.format(len(message)*8)
+paddedLength = binLength.zfill(36)
 
 # fill in extra 0s
-extraZeros = '000000000000000000000000'
+#extraZeros = '000000000000000000000000'
 
 # combine everything
-binArray.append(extraZeros)
-binArray.append(str(binLength))
+binArray = []
+
+binArray.append(str(paddedLength))
 binStringLength = ''.join(binArray)
 
-print("Binary of ", len(message)*8, "=", binStringLength)
-
+print(binStringLength)
 
 # convert each char into binary, store into binMessage
 binMessageLength = []
@@ -71,16 +75,10 @@ for ch in message:
     
 binMessage = ''.join(binMessageLength)
 
-print("Length of Binary Message:", len(binMessage))
-print("Binary of Secret Message:", binMessage)
-
 # counters
-binaryCounter = len(binMessage)
+binaryCounter = len(binMessage)-1
 pixeCounter = 0
 pointer = 0
-
-# Create copy of the original image
-pix = im.load() 
 
 # loop through image pixels
 for row in range((height-1), -1, -1):
@@ -101,21 +99,15 @@ for row in range((height-1), -1, -1):
            
            binary_r = int(binStringLength[pointer])
            red_value = setbit(red_value, binary_r)
-           pointer = pointer + 1
-           
-           print("LENGTH Binary R value:", binary_r)
+           pointer = pointer + 1         
 
            binary_g = int(binStringLength[pointer])
            green_value = setbit(green_value, binary_g)
            pointer = pointer + 1
            
-           print("LENGTH Binary G value:", binary_g)
-
            binary_b = int(binStringLength[pointer])
            blue_value = setbit(blue_value, binary_b)
            pointer = pointer + 1
-           
-           print("LENGTH Binary B value:", binary_b)
 
 	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, blue_value
@@ -125,15 +117,11 @@ for row in range((height-1), -1, -1):
            
            binary_r = int(binStringLength[pointer])
            red_value = setbit(red_value, binary_r)
-           pointer = pointer + 1
-           
-           print("LENGTH Binary R value:", binary_r)
+           pointer = pointer + 1        
 
            binary_g = int(binStringLength[pointer])
            green_value = setbit(green_value, binary_g)
            pointer = pointer + 1
-           
-           print("LENGTH Binary G value:", binary_g)
 
 	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, binary_b
@@ -148,41 +136,39 @@ for row in range((height-1), -1, -1):
            
                binary_r = int(binMessage[pointer])
                red_value = setbit(red_value, binary_r)
-               pointer = pointer + 1
-           
-               print("Binary R value:", binary_r)
+               pointer = pointer + 1             
 
                if (pointer < binaryCounter):
                            
                    binary_g = int(binMessage[pointer])
                    green_value = setbit(green_value, binary_g)
-                   pointer = pointer + 1
-           
-                   print("Binary G value:", binary_g)
+                   pointer = pointer + 1         
                    
                else:
                	   
                	   # save new lsb back into pixel
-                   pix[col, row] = red_value, binary_g, binary_b
-                   
-                   print("No more, saving from Green")
+                   pix[col, row] = red_value, binary_g, binary_b                 
                    
                if (pointer < binaryCounter):
 
                    binary_b = int(binMessage[pointer])
                    blue_value = setbit(blue_value, binary_b)
-                   pointer = pointer + 1
-                   
-                   print("Binary B value:", binary_b)
+                   pointer = pointer + 1               
                    
                else:
 
                	   # save new lsb back into pixel
-                   pix[col, row] = red_value, green_value, binary_b
+                   pix[col, row] = red_value, green_value, binary_b                
                    
-                   print("No more, saving from BLUE")
+           # save new lsb back into pixel
+           pix[col, row] = red_value, green_value, blue_value
                           
 # it automatically saves?
 im.save("modifiedImage.png")
+
+print("")
+print("Encoding Sucessful")
+print("Contents of secret.txt encoded into 'modifiedImage.png'")
+print("")
 
 
