@@ -17,8 +17,7 @@ For some odd reason I can only output part of the decoded message.
 
 encode.py
 Execution: python3 encode.py
-Instructions: make sure your secret message is called 'secret.txt' 
-and the image to encode is called 'Image.jpeg'
+Instructions: make sure your secret message is called 'secret.txt' and the image to encode is called 'Image.jpeg'
 
 Using pill, I grab the width and height of the image.
 I also open the text file and make sure that there is enough space for the text to be
