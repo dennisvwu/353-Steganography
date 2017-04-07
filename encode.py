@@ -8,6 +8,9 @@ y_size = im.size[1]
 
 print("The size of the Image is:", im.size[0], " x ", im.size[1])
 
+# # convert length integer into binary, fill extra 0s and then 8 binary value to 11 pixels
+# # convert each char into binary, send into array[]
+
 # loop through image starting from bottom right corner pixel
 #for row in xrange((x_size-1), 0, -1):
 #    for col in xrange((y_size-1), 0, -1):      
@@ -55,6 +58,9 @@ message = input('what is the message? ')
 print("Text length = ", len(message), "* 8-bits = " , (len(message) * 8))
 print("Binary: ", bin(len(message) * 8))
 print("Pixels needed to encode (not including reserved last 11): ", ((len(message)*8)/3 + 1))
+
+# hold array of binary, keep track with a pointer
+# increment pointer every time binary is used
 
 # === following code from guide: interactivepython.org ===
 
