@@ -1,9 +1,8 @@
 Name: Dennis Wu
-Application:
 
 decode.py 
 Execution: python3 decode.py
-Note: Image to decode should called "testImage.png"
+Instructions: make sure 'modifiedImage.png' is in the same folder
 
 Using pill, I grab the width and height of the image. 
 Going reverse to read the last 11 pixel's r,g,b values.
@@ -11,10 +10,21 @@ Using simple binary operator to grab the lsb of each color binary value
 Combine the binary array and convert the string into an integer value
 
 Using the integer value (aka length), I loop through the remaining pixels (12th pixel)
-Once the length counter goes down to zero, I combine all the lsb values and
-attempt to conver the binary to int, then from int to char.
+I combine all the lsb values into a string, and every 8th value i combine and convert
+the binary into the char value.
+
+For some odd reason I can only output part of the decoded message.
 
 encode.py
 Execution: python3 encode.py
-Note: code is incomplete, I was stuck on trying to convert the binary to int to char on
-the decode.py file so I was not able to complete the encoding. Included are psudeo code.
+Instructions: make sure your secret message is called 'secret.txt' 
+and the image to encode is called 'Image.jpeg'
+
+Using pill, I grab the width and height of the image.
+I also open the text file and make sure that there is enough space for the text to be
+encoded into the image. I then convert each character of the text into binary and store
+it into an array.
+
+Taking the length of the text * 8, I convert it to binary and use the last 11 pixel's
+r,g,b lsb value to overwrite it. Starting from the 12th pixel, I begin encoding the pixel's
+r,g,b lsb value with the value from the text array.
