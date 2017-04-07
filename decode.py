@@ -103,7 +103,7 @@ for row in range((height-1), -1, -1):
 binMessage = ''.join(textArray)
    
 # convert binary to actual text
-message = ''.join(chr(int(binMessage[ i*8: i*8 + 8],2)) for i in range(len(binMessage) // 8)) 
+message = ''.join(chr(int(binMessage[ i*8: i*8 + 8],2)) for i in range(len(binMessage) // 8)) # <-- doesn't print everything
 
 print("")
 print("Decoding Sucessful!")
