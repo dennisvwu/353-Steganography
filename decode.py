@@ -59,7 +59,14 @@ for row in range((x_size-1), 0, -1):
 	
  #  # save all appended values to string using binString = ''.join(binaryArray)
  #  # convert the string to integer with base 2 using int(binString, 2)
- #  # use the integer value as a counter to decode the rest of the image
+
+	
+ # # use the integer value as a counter to decode the rest of the image
+ # # loop thru string in array [ length / 8 ] times
+ # # every 8 binaries append to a string sing: >>> chr(int(binary_string, 2))
+ # # output char to terminal
+ 
+
 	                
                 
           
