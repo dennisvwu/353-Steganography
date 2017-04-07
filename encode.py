@@ -44,7 +44,12 @@ print("The size of the Image is:", im.size[0], " x ", im.size[1])
 
 import random
 
+# note: figure out how to read from a text file instead of terminal
 message = input('what is the message? ')
+
+# Output text/message information
+# note: check for length of the message to the image height x image length
+#       output error message if the length of the message is > image (length x height)
 
 print("Text length = ", len(message), "* 8-bits = " , (len(message) * 8),)
 print("Binary: ", bin(len(message) * 8))
@@ -102,20 +107,23 @@ pix = im.load()
 # testing last 11 pixels
 for row in range((x_size-1), 0, -1):
     for col in range((y_size-1), 0, -1):
+	
+	# reserve the last 11 pixels to store the text/message length in binary
+	# write loop that starts backwards
 
-        red_template, green_template, blue_template = im.getpixel((row,col))
+        red_value, green_value, blue_value = im.getpixel((row, col))
 
         redbit = next(bitstream)
-        red_template = setbit(red_template,redbit)
+        red_value = setbit(red_value, redbit)
 
         greenbit = next(bitstream)
-        green_template = setbit(green_template,greenbit)
+        green_value = setbit(green_value, greenbit)
 
         bluebit = next(bitstream)
-        blue_template = setbit(blue_template,bluebit)
+        blue_value = setbit(blue_value, bluebit)
 
 	    # save new lsb back into pixel
-        pix[row, col] = red_template, green_template, blue_template
+        pix[row, col] = red_value, green_value, blue_value
 
 # it automatically saves?
 im.save("modifiedLenna.png")
