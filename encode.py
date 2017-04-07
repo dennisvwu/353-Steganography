@@ -1,98 +1,7 @@
 from PIL import Image
 
-im = Image.open("Image.jpeg") 
-
-# height & width of image
-x_size = im.size[0]
-y_size = im.size[1]
-
-print("The size of the Image is:", im.size[0], " x ", im.size[1])
-
-# # convert length integer into binary [8], 
-# # create string with leading 24 zeros and then 8 binary values into binLength[]
-# # loop into last 11 pixels to insert the 32 binary values
-# # check each char, if char == '1' then insert 1, if char == '0' then insert 0
-
-# # convert each char into binary, store into binMessage[]
-# # store binMessage length and create a pointer starting at 0
-
-# loop through image starting from bottom right corner pixel
-#for row in xrange((x_size-1), 0, -1):
-#    for col in xrange((y_size-1), 0, -1):      
-#
-#       # capture r,g,b values
-#       red_value, green_value, blue_value = im.getpixel((row, col))
-#
-#       # note: remember to reserve last 11 pixels for text length (binary)
-#       # loop only 8 times to record binary of text length
-#
-#       # check if at last 11 pixels
-#       # if (row == x_size-1) && (col == (y_size-1..y_size-11))
-#           # check text length (binary counter)
-#           # if (text_length_counter > 0)
-#           #   modify red value & decrease text_length_counter
-#           # if (text_length_counter > 0)
-#           #   modify green value & decrease text_length_counter
-#           # if (text_length_counter > 0)
-#           #   modify blue value & decrease text_length_counter
-#           # note: nothing happens once counter == 0
-#       # else
-#           # start lsb modification starting on bottom right 12th pixel
-#
-#           # check text length (text_binary_counter)
-#           # modify red value & decrease text_binary_counter
-#
-#           # check text length (text_binary_counter)
-#           # modify green value & descrease text_binary_counter
-#
-#           # check text length (text_binary_counter)
-#           # modify blue value & text_binary_counter
-#
-#           # note: nothing gets modified if binary counter == 0
-
+import string
 import random
-
-# note: figure out how to read from a text file instead of terminal
-# message = open("text.txt")
-message = input('what is the message? ')
-
-# Output text/message information
-# note: check for length of the message to the image height x image length
-#       output error message if the length of the message is > image (length x height)
-
-print("Text length = ", len(message), "* 8-bits = " , (len(message) * 8))
-print("Binary: ", bin(len(message) * 8))
-print("Pixels needed to encode (not including reserved last 11): ", ((len(message)*8)/3 + 1))
-
-# hold array of binary, keep track with a pointer
-# increment pointer every time binary is used
-
-# === following code from guide: interactivepython.org ===
-
-# ===================================================
-# Function: bit_generator
-# Input: string
-# Output: 1 bit
-# ===================================================
-# Summary: 
-# returns the bits needed for the message
-# return 7 x 0's to indicate end of message
-# returns random 0 & 1 to fill up remaining pixels
-# ===================================================
-def bit_generator(message):
-    for ch in message:
-        ascii = ord(ch)
-        count = 0
-        while count < 7:
-            yield ascii & 1
-            ascii = ascii >> 1
-            count += 1
-    for i in range(7):
-        yield 0
-    while True:
-        yield random.randrange(1)
-
-bitstream = bit_generator(message)
 
 # ===================================================
 # Function: setbit
@@ -104,6 +13,8 @@ bitstream = bit_generator(message)
 # the new byte
 # ===================================================
 
+# === following code from guide: interactivepython.org ===
+
 def setbit(oldbyte, newbit):
 	if newbit:
 		return oldbyte | newbit
@@ -112,36 +23,166 @@ def setbit(oldbyte, newbit):
 
 # ======== end code from guide: interactivepython.org ====
 
+
+
+im = Image.open("Image.jpeg") 
+
+# height & width of image
+width = im.width
+height = im.height
+
+# grab secret message to encode
+message = open('secret.txt', 'r').read()
+
+# Output text/message information
+print("The size of the Image is:", width, " x ", height, " = ", (width*height), "pixels")
+print("Secret text length:", len(message))
+print("Pixels needed to encode (including reserved last 11):", ((len(message)*8)//3 + 12), "pixels")
+
+# note: check for length of the message to the image height x image length
+#       output error message if the length of the message is > image (length x height)
+if (width*height < (len(message)*8)):
+    print("Sorry, image size is too small to fit all the secret message")
+    # need to figure out how to exit program
+
+binArray = []
+
+# format the binary
+binLength = '{:08b}'.format(len(message)*8)
+
+# fill in extra 0s
+extraZeros = '000000000000000000000000'
+
+# combine everything
+binArray.append(extraZeros)
+binArray.append(str(binLength))
+binStringLength = ''.join(binArray)
+
+print("Binary of ", len(message)*8, "=", binStringLength)
+
+
+# convert each char into binary, store into binMessage
+binMessageLength = []
+
+for ch in message:
+    ascii = ord(ch)
+    binary = '{:08b}'.format(ascii)
+    binMessageLength.append(str(binary))   
+    
+binMessage = ''.join(binMessageLength)
+
+print("Length of Binary Message:", len(binMessage))
+print("Binary of Secret Message:", binMessage)
+
+# counters
+binaryCounter = len(binMessage)
+pixeCounter = 0
+pointer = 0
+
 # Create copy of the original image
 pix = im.load() 
 
-# testing last 11 pixels
-for row in range((x_size-1), 0, -1):
-    for col in range((y_size-1), 0, -1):
+# loop through image pixels
+for row in range((height-1), -1, -1):
+
+    for col in range((width-1), -1, -1):
+    
+        red_value, green_value, blue_value = im.getpixel((col, row))
+        
+        # grab the lsb of each color value
+        binary_r = (red_value & 1)
+        binary_g = (green_value & 1)
+        binary_b = (blue_value & 1) 
 	
-	# reserve the last 11 pixels to store the text/message length in binary
-	# convert length of text/message to integer -> binary 
-	# append twenty-four 0s and then binary of the text/message length
-	
-	# check for the last 11 pixels
-	
-	# start on 12th pixel and insert the message using the pixel RGB lsb
-	# loop length of text/message times
+        pixeCounter = pixeCounter + 1
+	    
+	    # reserve the last 11 pixels to store the text/message length in binary
+        if (pixeCounter <= 10):
+           
+           binary_r = int(binMessage[pointer])
+           red_value = setbit(red_value, binary_r)
+           pointer = pointer + 1
+           
+           print("Binary R value:", binary_r)
 
-        red_value, green_value, blue_value = im.getpixel((row, col))
+           binary_g = int(binMessage[pointer])
+           green_value = setbit(green_value, binary_g)
+           pointer = pointer + 1
+           
+           print("Binary G value:", binary_g)
 
-        redbit = next(bitstream)
-        red_value = setbit(red_value, redbit)
+           binary_b = int(binMessage[pointer])
+           blue_value = setbit(blue_value, binary_b)
+           pointer = pointer + 1
+           
+           print("Binary B value:", binary_b)
 
-        greenbit = next(bitstream)
-        green_value = setbit(green_value, greenbit)
+	       # save new lsb back into pixel
+           pix[col, row] = red_value, green_value, blue_value
+        
+        # 11th pixel only stores the Red and Green value
+        if (pixeCounter == 11):
+           
+           binary_r = int(binMessage[pointer])
+           red_value = setbit(red_value, binary_r)
+           pointer = pointer + 1
+           
+           print("Binary R value:", binary_r)
 
-        bluebit = next(bitstream)
-        blue_value = setbit(blue_value, bluebit)
+           binary_g = int(binMessage[pointer])
+           green_value = setbit(green_value, binary_g)
+           pointer = pointer + 1
+           
+           print("Binary G value:", binary_g)
 
-	# save new lsb back into pixel
-        pix[row, col] = red_value, green_value, blue_value
+	       # save new lsb back into pixel
+           pix[col, row] = red_value, green_value, binary_b
+              
+        # start on 12th pixel to encode secret text      
+        else:
+        
+           if (pointer < binaryCounter):
+           
+               binary_r = int(binMessage[pointer])
+               red_value = setbit(red_value, binary_r)
+               pointer = pointer + 1
+           
+               print("Binary R value:", binary_r)
 
+
+               if (pointer < binaryCounter):
+                           
+                   binary_g = int(binMessage[pointer])
+                   green_value = setbit(green_value, binary_g)
+                   pointer = pointer + 1
+           
+                   print("Binary G value:", binary_g)
+                   
+               else:
+               	   
+               	   # save new lsb back into pixel
+                   pix[col, row] = red_value, binary_g, binary_b
+                   
+                   print("No more, saving from Green")
+                   
+               if (pointer < binaryCounter):
+
+                   binary_b = int(binMessage[pointer])
+                   blue_value = setbit(blue_value, binary_b)
+                   pointer = pointer + 1
+                   
+                   print("Binary B value:", binary_b)
+                   
+               else:
+
+               	   # save new lsb back into pixel
+                   pix[col, row] = red_value, green_value, binary_b
+                   
+                   print("No more, saving from BLUE")
+                
+
+            
 # it automatically saves?
 im.save("modifiedImage.png")
+
 
