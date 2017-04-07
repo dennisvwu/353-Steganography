@@ -1,17 +1,19 @@
+# ============================================================================
+# Function: encode
+# By: Dennis Wu
+# Input: Image.jpeg & secret.txt
+# Output: modifiedImage.png
+# ============================================================================
+# Summary: reads text file and replaces the last 11 pixels with the length
+#          of the text file. the remaining pixels's r,g,b least significant
+#          bit/byte gets replaced with the binary of the actual message from
+#          the secret.txt file.
+# 
+# ============================================================================
+
 from PIL import Image
 
 import string
-import random
-
-# ===================================================
-# Function: setbit
-# Input: oldbyte, newbit
-# Output: updated bit value
-# ===================================================
-# Summary: 
-# function replaces the lsb of the byte and returns 
-# the new byte
-# ===================================================
 
 # === following code from guide: interactivepython.org ===
 
@@ -22,8 +24,6 @@ def setbit(oldbyte, newbit):
 		return oldbyte & 0b11111110
 
 # ======== end code from guide: interactivepython.org ====
-
-
 
 im = Image.open("Image.jpeg") 
 
@@ -99,23 +99,23 @@ for row in range((height-1), -1, -1):
 	    # reserve the last 11 pixels to store the text/message length in binary
         if (pixeCounter <= 10):
            
-           binary_r = int(binMessage[pointer])
+           binary_r = int(binStringLength[pointer])
            red_value = setbit(red_value, binary_r)
            pointer = pointer + 1
            
-           print("Binary R value:", binary_r)
+           print("LENGTH Binary R value:", binary_r)
 
-           binary_g = int(binMessage[pointer])
+           binary_g = int(binStringLength[pointer])
            green_value = setbit(green_value, binary_g)
            pointer = pointer + 1
            
-           print("Binary G value:", binary_g)
+           print("LENGTH Binary G value:", binary_g)
 
-           binary_b = int(binMessage[pointer])
+           binary_b = int(binStringLength[pointer])
            blue_value = setbit(blue_value, binary_b)
            pointer = pointer + 1
            
-           print("Binary B value:", binary_b)
+           print("LENGTH Binary B value:", binary_b)
 
 	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, blue_value
@@ -123,23 +123,26 @@ for row in range((height-1), -1, -1):
         # 11th pixel only stores the Red and Green value
         if (pixeCounter == 11):
            
-           binary_r = int(binMessage[pointer])
+           binary_r = int(binStringLength[pointer])
            red_value = setbit(red_value, binary_r)
            pointer = pointer + 1
            
-           print("Binary R value:", binary_r)
+           print("LENGTH Binary R value:", binary_r)
 
-           binary_g = int(binMessage[pointer])
+           binary_g = int(binStringLength[pointer])
            green_value = setbit(green_value, binary_g)
            pointer = pointer + 1
            
-           print("Binary G value:", binary_g)
+           print("LENGTH Binary G value:", binary_g)
 
 	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, binary_b
+           
+           # reset pointer
+           pointer = 0
               
         # start on 12th pixel to encode secret text      
-        else:
+        if (pixeCounter > 11):
         
            if (pointer < binaryCounter):
            
@@ -148,7 +151,6 @@ for row in range((height-1), -1, -1):
                pointer = pointer + 1
            
                print("Binary R value:", binary_r)
-
 
                if (pointer < binaryCounter):
                            
@@ -179,9 +181,7 @@ for row in range((height-1), -1, -1):
                    pix[col, row] = red_value, green_value, binary_b
                    
                    print("No more, saving from BLUE")
-                
-
-            
+                          
 # it automatically saves?
 im.save("modifiedImage.png")
 
