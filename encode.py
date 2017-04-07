@@ -8,8 +8,13 @@ y_size = im.size[1]
 
 print("The size of the Image is:", im.size[0], " x ", im.size[1])
 
-# # convert length integer into binary, fill extra 0s and then 8 binary value to 11 pixels
-# # convert each char into binary, send into array[]
+# # convert length integer into binary [8], 
+# # create string with leading 24 zeros and then 8 binary values into binLength[]
+# # loop into last 11 pixels to insert the 32 binary values
+# # check each char, if char == '1' then insert 1, if char == '0' then insert 0
+
+# # convert each char into binary, store into binMessage[]
+# # store binMessage length and create a pointer starting at 0
 
 # loop through image starting from bottom right corner pixel
 #for row in xrange((x_size-1), 0, -1):
