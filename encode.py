@@ -8,7 +8,7 @@
 #          of the text file. the remaining pixels's r,g,b least significant
 #          bit/byte gets replaced with the binary of the actual message from
 #          the secret.txt file.
-# 
+#
 # ============================================================================
 from PIL import Image
 
@@ -22,10 +22,10 @@ def setbit(oldbyte, newbit):
 		return oldbyte & 0b11111110
 # ======== end code from guide: interactivepython.org ====
 
-im = Image.open("Image.jpeg") 
+im = Image.open("Image.jpeg")
 
 # Create copy of the original image
-pix = im.load() 
+pix = im.load()
 
 # height & width of image
 width = im.width
@@ -55,20 +55,22 @@ binLength = '{:08b}'.format(len(message)*8)
 # fill in extra 0s
 paddedLength = binLength.zfill(33)
 
-# combine everything
-binArray = []
+print("binLength = ", binLength)
 
+# container for binary
+binArray = []
+binMessageLength = []
+
+# combine everything
 binArray.append(str(paddedLength))
 binStringLength = ''.join(binArray)
 
 # convert each char into binary, store into binMessage
-binMessageLength = []
-
 for ch in message:
     ascii = ord(ch)
     binary = '{:08b}'.format(ascii)
-    binMessageLength.append(str(binary))   
-    
+    binMessageLength.append(str(binary))
+
 binMessage = ''.join(binMessageLength)
 
 # counters
@@ -80,40 +82,37 @@ pointer = 0
 for row in range((height-1), -1, -1):
 
     for col in range((width-1), -1, -1):
-    
+
         red_value, green_value, blue_value = im.getpixel((col, row))
-        
+
         # grab the lsb of each color value
         binary_r = (red_value & 1)
         binary_g = (green_value & 1)
-        binary_b = (blue_value & 1) 
+        binary_b = (blue_value & 1)
 
-        pixeCounter = pixeCounter + 1
-		    
 	    # reserve the last 11 pixels to store the text/message length in binary
-        if (pixeCounter <= 10):
-           
+        if (pixeCounter < 10):
+
            binary_r = int(binStringLength[pointer])
            red_value = setbit(red_value, binary_r)
-           pointer = pointer + 1         
+           pointer = pointer + 1
 
            binary_g = int(binStringLength[pointer])
            green_value = setbit(green_value, binary_g)
            pointer = pointer + 1
-           
+
            binary_b = int(binStringLength[pointer])
            blue_value = setbit(blue_value, binary_b)
            pointer = pointer + 1
 
 	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, blue_value
-        
-        # 11th pixel only stores the Red and Green value
-        if (pixeCounter == 11):
-           
+
+        if (pixeCounter == 10):
+
            binary_r = int(binStringLength[pointer])
            red_value = setbit(red_value, binary_r)
-           pointer = pointer + 1        
+           pointer = pointer + 1
 
            binary_g = int(binStringLength[pointer])
            green_value = setbit(green_value, binary_g)
@@ -121,44 +120,44 @@ for row in range((height-1), -1, -1):
 
 	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, binary_b
-           
+
            # reset pointer
            pointer = 0
-              
-        # start on 12th pixel to encode secret text      
-        if (pixeCounter > 11):
-        
+
+        # start on 12th pixel to encode secret text
+        if (pixeCounter > 10):
+
            if (pointer < binaryCounter):
-           
+
                binary_r = int(binMessage[pointer])
                red_value = setbit(red_value, binary_r)
-               pointer = pointer + 1             
+               pointer = pointer + 1
 
-               if (pointer < binaryCounter):
-                           
-                   binary_g = int(binMessage[pointer])
-                   green_value = setbit(green_value, binary_g)
-                   pointer = pointer + 1         
-                   
-               else:
-               	   
-               	   # save new lsb back into pixel
-                   pix[col, row] = red_value, binary_g, binary_b                 
-                   
-               if (pointer < binaryCounter):
+           if (pointer < binaryCounter):
 
-                   binary_b = int(binMessage[pointer])
-                   blue_value = setbit(blue_value, binary_b)
-                   pointer = pointer + 1               
-                   
-               else:
+               binary_g = int(binMessage[pointer])
+               green_value = setbit(green_value, binary_g)
+               pointer = pointer + 1
 
-               	   # save new lsb back into pixel
-                   pix[col, row] = red_value, green_value, binary_b                
-                   
+           else:
+               # save new lsb back into pixel
+               pix[col, row] = red_value, binary_g, binary_b
+
+           if (pointer < binaryCounter):
+
+               binary_b = int(binMessage[pointer])
+               blue_value = setbit(blue_value, binary_b)
+               pointer = pointer + 1
+
+           else:
+               # save new lsb back into pixel
+               pix[col, row] = red_value, green_value, binary_b
+
            # save new lsb back into pixel
            pix[col, row] = red_value, green_value, blue_value
-                          
+
+        pixeCounter = pixeCounter + 1
+
 # it automatically saves?
 im.save("modifiedImage.png")
 
@@ -166,5 +165,3 @@ print("")
 print("Encoding Sucessful!")
 print("Contents of secret.txt encoded into 'modifiedImage.png'")
 print("")
-
-
