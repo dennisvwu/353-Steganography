@@ -36,9 +36,8 @@ message = open('secret.txt', 'r').read()
 
 # Output text/message information
 print("")
-print("The size of the Image is:", width, " x ", height, " = ", (width*height), "pixels")
-print("Secret text length:", len(message))
-print("Pixels needed to encode (including reserved last 11):", ((len(message)*8)//3 + 12), "pixels")
+print("The size of the Image is:", width, " x ", height)
+print("secret.txt character count:", len(message) - 1)
 
 # note: check for length of the message to the image height x image length
 #       output error message if the length of the message is > image (length x height)
@@ -52,16 +51,15 @@ if (width*height < (len(message)*8)):
 
 # format the binary
 binLength = '{:08b}'.format(len(message)*8)
+
 # fill in extra 0s
-paddedLength = binLength.zfill(36)
+paddedLength = binLength.zfill(33)
 
 # combine everything
 binArray = []
 
 binArray.append(str(paddedLength))
 binStringLength = ''.join(binArray)
-
-print(binStringLength)
 
 # convert each char into binary, store into binMessage
 binMessageLength = []
@@ -89,10 +87,10 @@ for row in range((height-1), -1, -1):
         binary_r = (red_value & 1)
         binary_g = (green_value & 1)
         binary_b = (blue_value & 1) 
-	
+
         pixeCounter = pixeCounter + 1
-	    
-	# reserve the last 11 pixels to store the text/message length in binary
+		    
+	    # reserve the last 11 pixels to store the text/message length in binary
         if (pixeCounter <= 10):
            
            binary_r = int(binStringLength[pointer])
@@ -107,7 +105,7 @@ for row in range((height-1), -1, -1):
            blue_value = setbit(blue_value, binary_b)
            pointer = pointer + 1
 
-	   # save new lsb back into pixel
+	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, blue_value
         
         # 11th pixel only stores the Red and Green value
@@ -121,7 +119,7 @@ for row in range((height-1), -1, -1):
            green_value = setbit(green_value, binary_g)
            pointer = pointer + 1
 
-	   # save new lsb back into pixel
+	       # save new lsb back into pixel
            pix[col, row] = red_value, green_value, binary_b
            
            # reset pointer
@@ -165,7 +163,7 @@ for row in range((height-1), -1, -1):
 im.save("modifiedImage.png")
 
 print("")
-print("Encoding Sucessful")
+print("Encoding Sucessful!")
 print("Contents of secret.txt encoded into 'modifiedImage.png'")
 print("")
 
