@@ -1,29 +1,46 @@
 Name: Dennis Wu
-
-decode.py 
+CPSC: 353
+Professor: Reza
+================================================================================
+decode.py
 Execution: python3 decode.py
-Instructions: make sure 'modifiedImage.png' is in the same folder
+File Required: modifiedImage.png
+Note: make sure 'modifiedImage.png' is in the same folder as the decode.py file
+================================================================================
+Summary:
 
-Using pill, I grab the width and height of the image. 
-Going reverse to read the last 11 pixel's r,g,b values.
-Using simple binary operator to grab the lsb of each color binary value
-Combine the binary array and convert the string into an integer value
+Grab the last 11 pixels from the bottom right of image
+Grab the least significant byte of each R/G/B value of the pixel
+Append to array, combine to get number of loops needed to decode text
 
-Using the integer value (aka length), I loop through the remaining pixels (12th pixel)
-I combine all the lsb values into a string, and every 8th value i combine and convert
-the binary into the char value.
+Loop through remaining pixels based on the integer value from the array
+Grab the least significant byte of each R/G/B value of the pixel
+Append value to array, combine into one string
+Convert string of binaries to text.
+================================================================================
 
-For some odd reason I can only output part of the decoded message.
-
+================================================================================
 encode.py
 Execution: python3 encode.py
-Instructions: make sure your secret message is called 'secret.txt' and the image to encode is called 'Image.jpeg'
+Files Required: Image.jpeg & secret.txt
+Instructions: make sure both files are in the folder as the encode.py file
+================================================================================
+Summary:
 
 Using pill, I grab the width and height of the image.
-I also open the text file and make sure that there is enough space for the text to be
-encoded into the image. I then convert each character of the text into binary and store
-it into an array.
+Open the text file and check the length to see if it will fit inside the image.
 
-Taking the length of the text * 8, I convert it to binary and use the last 11 pixel's
-r,g,b lsb value to overwrite it. Starting from the 12th pixel, I begin encoding the pixel's
-r,g,b lsb value with the value from the text array.
+Convert each character into binary and save into a message array
+
+Grab the text file length * number of byte (8) and binary value into bin array
+Loop through the 11 pixels starting from the bottom right of image
+Grab the least significant byte of each R/G/B value of the pixel
+Swap the byte with the byte saved in the bin array
+
+Continue on the 12th pixel to start encoding pixels with secret message
+Loop through the pixels [file length * num of bytes times]
+Grab the least significant byte of each R/G/B value of the pixel
+Swap the byte with the byte saved in the message array
+
+Save new image as "modifiedImage.png"
+================================================================================
